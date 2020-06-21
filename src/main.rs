@@ -1,10 +1,37 @@
+use anyhow::Result;
+use serde::{Deserialize, Serialize};
+use tokio::prelude::*;
 
-use serde::{Serialize, Deserialize};
-
+mod config;
 mod my_oauth;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     println!("Hello, world!");
-    let token = my_oauth::get_reddit_token().unwrap();
-    println!("Token: {}", token);
+
+    match my_oauth::get_reddit_token(
+        config::REDDIT_USERNAME,
+        config::REDDIT_PASSWORD,
+        config::REDDIT_APPID,
+        config::REDDIT_SECRET,
+    ).await {
+        Ok(a) => {
+            println!("Token: {}", a.access_token)
+        },
+        Err(err) => {
+            println!("{:?}", err);
+        }
+    };
+
+    /*let token = my_oauth::get_reddit_token(
+        config::REDDIT_USERNAME,
+        config::REDDIT_PASSWORD,
+        config::REDDIT_APPID,
+        config::REDDIT_SECRET,
+    )
+    .await
+    .unwrap();*/
+
+    //println!("Token: {}", token.access_token);
+    
 }
