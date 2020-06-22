@@ -3,35 +3,23 @@ use serde::{Deserialize, Serialize};
 use tokio::prelude::*;
 
 mod config;
-mod my_oauth;
+mod reddit;
 
 #[tokio::main]
 async fn main() {
     println!("Hello, world!");
 
-    match my_oauth::get_reddit_token(
+    let r = reddit::Reddit::new(
         config::REDDIT_USERNAME,
         config::REDDIT_PASSWORD,
         config::REDDIT_APPID,
         config::REDDIT_SECRET,
-    ).await {
-        Ok(a) => {
-            println!("Token: {}", a.access_token)
-        },
-        Err(err) => {
-            println!("{:?}", err);
-        }
-    };
+    ).await.unwrap();
 
-    /*let token = my_oauth::get_reddit_token(
-        config::REDDIT_USERNAME,
-        config::REDDIT_PASSWORD,
-        config::REDDIT_APPID,
-        config::REDDIT_SECRET,
-    )
-    .await
-    .unwrap();*/
+    let saved_posts = r.get_saved_posts().await.unwrap();
 
-    //println!("Token: {}", token.access_token);
-    
+    for post in saved_posts.data.children {
+        let post = post.data;
+        println!("{} - {}", post.title, post.url);
+    }
 }
