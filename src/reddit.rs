@@ -16,11 +16,31 @@ pub struct RedditAuthResponse {
 pub struct RedditPostData {
     pub subreddit: String,
     #[serde(default)]
-    pub title: String,
+    pub post_hint: Option<String>,
     #[serde(default)]
-    pub author: String,
+    pub title: Option<String>,
     #[serde(default)]
-    pub url: String,
+    pub author: Option<String>,
+    #[serde(default)]
+    pub url: Option<String>,
+    #[serde(default)]
+    pub name: Option<String>,
+    #[serde(default)]
+    pub selftext: Option<String>,
+    #[serde(default)]
+    pub selftext_html: Option<String>,
+
+    // t1_ posts use body, body_html and link_url for some reason 🤷
+    #[serde(default)]
+    pub body: Option<String>,
+    #[serde(default)]
+    pub body_html: Option<String>,
+    #[serde(default)]
+    pub link_url: Option<String>,
+    #[serde(default)]
+    pub link_title: Option<String>,
+    #[serde(default)]
+    pub link_id: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -86,16 +106,13 @@ impl Reddit {
             .send()
             .await?;
 
-        /*let body = res.text().await.unwrap();
-        print!("{}", body);*/
+        let body = res.text().await.unwrap();
+        //print!("{}", body);
 
-        let listing: RedditListing = res.json().await?;
+        //let listing: RedditListing = res.json().await?;
+        let listing: RedditListing = serde_json::from_str(&body).unwrap();
         //print!("{:?}", listing);
 
         Ok(listing)
     }
-}
-
-pub fn get_saved_posts(username: &str) -> Result<Vec<String>> {
-    Err(anyhow::anyhow!("derp"))
 }
