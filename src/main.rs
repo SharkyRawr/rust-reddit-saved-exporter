@@ -22,8 +22,34 @@ async fn main() {
         }
     }
 
-    for post in saved_posts.data.children {
-        let post = post.data;
-        println!("[{}] {}\n -> {}", post.name.unwrap_or_default(), post.title.unwrap_or_default(), post.url.unwrap_or_default());
+    for child in saved_posts.data.children {
+        let post = child.data;
+
+        let t = reddit::RedditListingKind::from_str(&child.kind).unwrap();
+
+        match t {
+            reddit::RedditListingKind::Comment => {
+                let title = post.link_title.unwrap_or_default();
+                println!("[{}] {}\n -> {}", post.name.unwrap_or_default(), title, post.link_url.unwrap_or_default());
+                let outpath = format!("saved/{}", post.subreddit.replace("/", " or ").replace("\\", " or "));
+                let outfilename = format!("{}/{}.md", outpath, title.replace("/", " or ").replace("\\", " or "));
+                std::fs::create_dir_all(outpath).unwrap();
+                std::fs::write(outfilename, post.body.unwrap()).unwrap();
+            },
+            reddit::RedditListingKind::Link => {
+                let title = post.title.unwrap_or_default();
+                println!("[{}] {}\n -> {}", post.name.unwrap_or_default(), title, post.url.unwrap_or_default());
+                let outpath = format!("saved/{}", post.subreddit.replace("/", " or ").replace("\\", " or "));
+                let outfilename = format!("{}/{}.md", outpath, title.replace("/", " or ").replace("\\", " or "));
+                std::fs::create_dir_all(outpath).unwrap();
+                std::fs::write(outfilename, post.selftext.unwrap()).unwrap();
+            }
+            _ => {
+                println!("Unhandable post kind: {:?} {}", t, post.name.unwrap_or_default());
+                break
+            }
+        }
+
+        //
     }
 }

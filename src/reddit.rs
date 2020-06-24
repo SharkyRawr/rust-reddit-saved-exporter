@@ -55,7 +55,7 @@ pub struct RedditListingData {
     pub children: Vec<RedditListingChild>
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Debug)]
 pub enum RedditListingKind {
     Comment,    // t1
     Account,    // t2
