@@ -1,5 +1,3 @@
-use anyhow::Result;
-use serde::{Deserialize, Serialize};
 use tokio::prelude::*;
 
 mod config;

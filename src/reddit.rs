@@ -56,6 +56,41 @@ pub struct RedditListingData {
 }
 
 #[derive(Deserialize, Debug)]
+pub enum RedditListingKind {
+    Comment,    // t1
+    Account,    // t2
+    Link,       // t3
+    Message,    // t4
+    Subreddit,  // t5
+    Award       // t6
+}
+
+impl RedditListingKind {
+    pub fn from_str(s: &str) -> Option<RedditListingKind> {
+        match s {
+            "t1" => Some(RedditListingKind::Comment),
+            "t2" => Some(RedditListingKind::Account),
+            "t3" => Some(RedditListingKind::Link),
+            "t4" => Some(RedditListingKind::Message),
+            "t5" => Some(RedditListingKind::Subreddit),
+            "t6" => Some(RedditListingKind::Award),
+            _ => None
+        }
+    }
+
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            RedditListingKind::Comment => "t1",
+            RedditListingKind::Account => "t2",
+            RedditListingKind::Link => "t3",
+            RedditListingKind::Message => "t4",
+            RedditListingKind::Subreddit => "t5",
+            RedditListingKind::Award => "t6"
+        }
+    }
+}
+
+#[derive(Deserialize, Debug)]
 pub struct RedditListing {
     pub kind: String,
     pub data: RedditListingData
